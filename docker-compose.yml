@@ -1,0 +1,45 @@
+version: '3.8'
+name: 'pmanager'
+services:
+    server:
+        container_name: pmanager_server
+        build: .
+        depends_on:
+            # Loading database first :)
+            - postgres
+        ports:
+            - "8080:8080"
+        environment:
+            - EXTERNAL_PORT=8080
+            - PGUSER=root
+            - PGPASSWORD=root
+            - PGDATABASE=root
+            - PGHOST=pmanager_db
+        volumes:
+            - ./:/usr/src/app/
+
+    postgres:
+        container_name: pmanager_db
+        image: postgres:14.1-alpine
+        restart: always
+        environment:
+            - POSTGRES_USER=root
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_DB=root
+        ports:
+            - "5432:5432"
+        volumes:
+            - pmanager_data:/var/lib/postgresql/data
+
+    pgadmin-compose:
+        container_name: pgadmin
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: "admin@admin.pg"
+            PGADMIN_DEFAULT_PASSWORD: "hellofriend123"
+        ports:
+            - "16543:80"
+        depends_on:
+            - postgres
+volumes:
+    pmanager_data: {}
