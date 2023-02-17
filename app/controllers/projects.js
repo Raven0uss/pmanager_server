@@ -2,6 +2,7 @@ const Project = require("../models/projects");
 const getUserId = require("../functions/getUserId");
 const isJsonString = require("../functions/isJsonString");
 
+// Get Single Project
 exports.getProject = async (req, res) => {
   console.log("getProject: [GET] /projects/getProject?project_id=X");
   try {
@@ -17,6 +18,7 @@ exports.getProject = async (req, res) => {
   }
 };
 
+// Get All Projects (without JSON to avoid heavy contents)
 exports.getProjects = async (req, res) => {
   console.log("getProjects: [GET] /projects/getProjects");
   try {
@@ -33,15 +35,20 @@ exports.getProjects = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+
+// Create Project
 exports.createProject = async (req, res) => {
   console.log("createProject: [POST] /projects/createProject");
   try {
+    // Check if the JSON is valid
     if (!isJsonString(req.body.content)) {
       return res.status(400).json("Bad Request - bad json");
     }
     if (!req.body.name) {
       return res.status(400).json("Bad Request - name is empty");
     }
+
+    // Get existing projects of the user
     const existingProjects = await Project.findAll({
       where: {
         user_id: getUserId(req),
@@ -49,6 +56,7 @@ exports.createProject = async (req, res) => {
       attributes: ["name"],
     });
 
+    // Check if the user has already a project with the name requested
     const projectsList = existingProjects.map((project) => project.name);
     if (projectsList.includes(req.body.name)) {
       return res.status(400).json("Bad Request - name already exist");
@@ -71,6 +79,7 @@ exports.createProject = async (req, res) => {
   }
 };
 
+// Delete one or multiple projects. Avoid to have a single request just for one deletion
 exports.deleteProjects = async (req, res) => {
   console.log("deleteProjects: [DELETE] /projects/deleteProjects?ids=X;X2");
   try {
@@ -84,6 +93,7 @@ exports.deleteProjects = async (req, res) => {
   }
 };
 
+// Update a project of a user
 exports.updateProject = async (req, res) => {
   console.log("updateProject: [PUT] /projects/updateProject?project_id=X");
   try {
@@ -97,6 +107,7 @@ exports.updateProject = async (req, res) => {
       return res.status(400).json("Bad Request");
     }
 
+    // Check if the JSON is valid
     if (!isJsonString(req.body.content)) {
       return res.status(400).json("Bad Request - bad json");
     }
@@ -104,12 +115,14 @@ exports.updateProject = async (req, res) => {
       return res.status(400).json("Bad Request - name is empty");
     }
 
+    // Get the name of the current project to exclude it from the check bloc after
     const currentProject = await Project.findOne({
       where: { id, user_id: getUserId(req) },
       attributes: ["name"],
     });
     const currentName = currentProject.name;
 
+    // Get all the projects owned by the user
     const existingProjects = await Project.findAll({
       where: {
         user_id: getUserId(req),
@@ -117,6 +130,8 @@ exports.updateProject = async (req, res) => {
       attributes: ["name"],
     });
 
+    // As for creation, check if name is already set for another project
+    // but excluding the current one (which can throw an error)
     const projectsList = existingProjects
       .map((project) => project.name)
       .filter((name) => name !== currentName);
