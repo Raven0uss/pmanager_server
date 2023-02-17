@@ -20,8 +20,9 @@ const projectsRoutes = require("./routes/projects");
 app.use("/api/projects", projectsRoutes);
 app.use("/api/auth", usersRoutes);
 
+// Alive Check
 app.get("/", (req, res) => {
-  res.send(`<h1>Status 200</h1>`);
+  res.send(`<h1>Server is alive</h1>`);
 });
 
 module.exports = app;

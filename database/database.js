@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
 
-//GET ENV VARIABLES FROM
 const sequelize = new Sequelize(
   process.env.PGDATABASE,
   process.env.PGUSER,
