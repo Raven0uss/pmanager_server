@@ -4,6 +4,7 @@ services:
     server:
         container_name: pmanager_server
         build: .
+        restart: on-failure
         depends_on:
             # Loading database first :)
             - postgres
@@ -15,6 +16,7 @@ services:
             - PGPASSWORD=root
             - PGDATABASE=root
             - PGHOST=pmanager_db
+            - PGHOST_TEST=pmanager_db_test
             - TOKEN_SECRET=xWmso9Os78GXhkruYB2FMWQPglostosEkCeyMxoWBo4d109RAdhG8pvdiBdJDls
         volumes:
             - ./:/usr/src/app/
@@ -31,6 +33,20 @@ services:
             - "5432:5432"
         volumes:
             - pmanager_data:/var/lib/postgresql/data
+    db-test:
+        container_name: pmanager_db_test
+        image: postgres:14.1-alpine
+        restart: always
+        environment:
+            - POSTGRES_USER=root
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_DB=root
+        ports:
+            - 5430:5432
+        volumes:
+            - pmanager_data_test:/var/lib/postgresql/data
+
 
 volumes:
     pmanager_data: {}
+    pmanager_data_test: {}
