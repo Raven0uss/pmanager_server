@@ -15,6 +15,7 @@ services:
             - PGPASSWORD=root
             - PGDATABASE=root
             - PGHOST=pmanager_db
+            - TOKEN_SECRET=xWmso9Os78GXhkruYB2FMWQPglostosEkCeyMxoWBo4d109RAdhG8pvdiBdJDls
         volumes:
             - ./:/usr/src/app/
 
@@ -31,15 +32,5 @@ services:
         volumes:
             - pmanager_data:/var/lib/postgresql/data
 
-    pgadmin-compose:
-        container_name: pgadmin
-        image: dpage/pgadmin4
-        environment:
-            PGADMIN_DEFAULT_EMAIL: "admin@admin.pg"
-            PGADMIN_DEFAULT_PASSWORD: "hellofriend123"
-        ports:
-            - "16543:80"
-        depends_on:
-            - postgres
 volumes:
     pmanager_data: {}

@@ -1,4 +1,4 @@
-const getUserId = require("./getUserId");
+const getUserId = require("../functions/getUserId");
 
 module.exports = (req, res, next) => {
   try {
