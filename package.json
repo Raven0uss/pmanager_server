@@ -9,7 +9,7 @@
   },
   "jest": {
     "verbose": true,
-    "collectCoverage": false,
+    "collectCoverage": true,
     "collectCoverageFrom": [
       "app/**/*.js",
       "!app/routes/**",
