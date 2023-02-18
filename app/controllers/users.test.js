@@ -16,9 +16,6 @@ describe("register check suites", () => {
     database = lodash.clone(mock_database);
   });
 
-  //   test("register empty password", () => {});
-
-  //   test("register empty username", () => {});
 
 //   test("register success", async () => {
 //     const User = {
@@ -50,7 +47,8 @@ describe("register check suites", () => {
 //     });
 //   });
 
-  //   test("register error 400", () => {});
-
-  //   test("register error 500", () => {});
+  test.todo("register empty password");
+  test.todo("register empty username");
+  test.todo("register error 400");
+  test.todo("register error 500");
 });
