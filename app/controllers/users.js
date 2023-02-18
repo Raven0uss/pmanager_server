@@ -1,15 +1,20 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/users");
+const {
+  BAD_REQUEST,
+  USERNAME_PASSWORD_INVALID,
+  USER_NOT_FOUND,
+  PASSWORD_INCORRECT,
+} = require("../../statusMessages");
 
 // Register controller function
-exports.register = async (req, res) => {
+exports.register = (User) => async (req, res) => {
   console.log("register: [POST] /register");
   try {
     // Avoiding an error form hash function of bcrypt
     if (!req.body.password || !req.body.username) {
       console.error("[ERROR] Password or Username are empty");
-      return res.status(400).json("Bad Request");
+      return res.status(400).json(USERNAME_PASSWORD_INVALID);
     }
     bcrypt.hash(req.body.password, 10).then(async (hash) => {
       const USER_MODEL = {
@@ -26,28 +31,24 @@ exports.register = async (req, res) => {
       }
     });
   } catch (error) {
-    return res.status(400).json("Bad Request");
+    return res.status(400).json(BAD_REQUEST);
   }
 };
 
 // Login controller function
-exports.login = async (req, res) => {
+exports.login = (User) => async (req, res) => {
   console.log("login: [POST] /login");
   try {
     const username = req.body.username;
 
     const user = await User.findOne({ where: { username } });
     if (!user) {
-      return res.status(401).json({
-        error: new Error("User not found!"),
-      });
+      return res.status(401).json(USER_NOT_FOUND);
     }
 
     const valid = await bcrypt.compare(req.body.password, user.password);
     if (!valid) {
-      return res.status(401).json({
-        error: new Error("Incorrect password!"),
-      });
+      return res.status(401).json(PASSWORD_INCORRECT);
     }
 
     const token = jwt.sign({ userId: user.id }, process.env.TOKEN_SECRET, {

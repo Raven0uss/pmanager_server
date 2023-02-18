@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const { INVALID_USERID } = require("../../statusMessages");
+const mockStatusCatch = require("../../__mocks__/mockStatusCatch");
 
 const authMiddleware = require("./auth");
 
@@ -10,11 +12,6 @@ describe("Testing middleware auth check", () => {
 
   // Mocks
   const mockNext = jest.fn(() => {});
-  const mockStatusCatch = jest.fn((statusCode) => {
-    void statusCode;
-    return { json: () => {} };
-  });
-
   beforeEach(() => {
     jest.resetModules();
     process.env = { ...env, ...dockerEnv };
@@ -74,7 +71,7 @@ describe("Testing middleware auth check", () => {
       authMiddleware(input.req, input.res, mockNext);
     } catch (error) {
       expect(error).toBeInstanceOf(TypeError);
-      expect(error).toHaveProperty("message", "Invalid user ID");
+      expect(error).toHaveProperty("message", INVALID_USERID);
     }
   });
 
@@ -97,7 +94,7 @@ describe("Testing middleware auth check", () => {
       authMiddleware(input.req, input.res, mockNext);
     } catch (error) {
       expect(error).toBeInstanceOf(TypeError);
-      expect(error).toHaveProperty("message", "Invalid user ID");
+      expect(error).toHaveProperty("message", INVALID_USERID);
     }
   });
 });

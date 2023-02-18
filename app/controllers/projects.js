@@ -1,9 +1,14 @@
-const Project = require("../models/projects");
+const {
+  BAD_JSON,
+  P_NAME_EMPTY,
+  P_NAME_EXIST,
+  BAD_REQUEST,
+} = require("../../statusMessages");
 const getUserId = require("../functions/getUserId");
 const isJsonString = require("../functions/isJsonString");
 
 // Get Single Project
-exports.getProject = async (req, res) => {
+exports.getProject = (Project) => async (req, res) => {
   console.log("getProject: [GET] /projects/getProject?project_id=X");
   try {
     const project = await Project.findOne({
@@ -14,12 +19,13 @@ exports.getProject = async (req, res) => {
     });
     return res.status(200).json(project);
   } catch (error) {
+    console.log(error);
     return res.status(500).json(error);
   }
 };
 
 // Get All Projects (without JSON to avoid heavy contents)
-exports.getProjects = async (req, res) => {
+exports.getProjects = (Project) => async (req, res) => {
   console.log("getProjects: [GET] /projects/getProjects");
   try {
     const projects = await Project.findAll({
@@ -37,15 +43,15 @@ exports.getProjects = async (req, res) => {
 };
 
 // Create Project
-exports.createProject = async (req, res) => {
+exports.createProject = (Project) => async (req, res) => {
   console.log("createProject: [POST] /projects/createProject");
   try {
     // Check if the JSON is valid
     if (!isJsonString(req.body.content)) {
-      return res.status(400).json("Bad Request - bad json");
+      return res.status(400).json(BAD_JSON);
     }
     if (!req.body.name) {
-      return res.status(400).json("Bad Request - name is empty");
+      return res.status(400).json(P_NAME_EMPTY);
     }
 
     // Get existing projects of the user
@@ -59,7 +65,7 @@ exports.createProject = async (req, res) => {
     // Check if the user has already a project with the name requested
     const projectsList = existingProjects.map((project) => project.name);
     if (projectsList.includes(req.body.name)) {
-      return res.status(400).json("Bad Request - name already exist");
+      return res.status(400).json(P_NAME_EXIST);
     }
 
     const PROJECT_MODEL = {
@@ -75,12 +81,12 @@ exports.createProject = async (req, res) => {
       return res.status(500).json(error);
     }
   } catch (error) {
-    return res.status(400).json("Bad Request");
+    return res.status(400).json(BAD_REQUEST);
   }
 };
 
 // Delete one or multiple projects. Avoid to have a single request just for one deletion
-exports.deleteProjects = async (req, res) => {
+exports.deleteProjects = (Project) => async (req, res) => {
   console.log("deleteProjects: [DELETE] /projects/deleteProjects?ids=X;X2");
   try {
     const ids = req.query.ids.split(";");
@@ -94,7 +100,7 @@ exports.deleteProjects = async (req, res) => {
 };
 
 // Update a project of a user
-exports.updateProject = async (req, res) => {
+exports.updateProject = (Project) => async (req, res) => {
   console.log("updateProject: [PUT] /projects/updateProject?project_id=X");
   try {
     const PROJECT_MODEL = {
@@ -104,15 +110,15 @@ exports.updateProject = async (req, res) => {
 
     const id = req.query.project_id;
     if (!id) {
-      return res.status(400).json("Bad Request");
+      return res.status(400).json(BAD_REQUEST);
     }
 
     // Check if the JSON is valid
     if (!isJsonString(req.body.content)) {
-      return res.status(400).json("Bad Request - bad json");
+      return res.status(400).json(BAD_JSON);
     }
     if (!req.body.name) {
-      return res.status(400).json("Bad Request - name is empty");
+      return res.status(400).json(P_NAME_EMPTY);
     }
 
     // Get the name of the current project to exclude it from the check bloc after
@@ -137,7 +143,7 @@ exports.updateProject = async (req, res) => {
       .filter((name) => name !== currentName);
 
     if (projectsList.includes(req.body.name)) {
-      return res.status(400).json("Bad Request - name already exist");
+      return res.status(400).json(P_NAME_EXIST);
     }
 
     try {
@@ -149,6 +155,6 @@ exports.updateProject = async (req, res) => {
       return res.status(500).json(error);
     }
   } catch (error) {
-    return res.status(400).json("Bad Request");
+    return res.status(400).json(BAD_REQUEST);
   }
 };
