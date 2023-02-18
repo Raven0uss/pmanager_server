@@ -1,4 +1,4 @@
-const { intersectionWith, toInteger } = require("lodash");
+const { intersectionWith } = require("lodash");
 
 module.exports = (database) => ({
   // Return only one element which match with where

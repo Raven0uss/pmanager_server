@@ -1,3 +1,4 @@
+const { isNil } = require("lodash");
 const {
   BAD_JSON,
   P_NAME_EMPTY,
@@ -109,9 +110,6 @@ exports.updateProject = (Project) => async (req, res) => {
     };
 
     const id = req.query.project_id;
-    if (!id) {
-      return res.status(400).json(BAD_REQUEST);
-    }
 
     // Check if the JSON is valid
     if (!isJsonString(req.body.content)) {
@@ -126,6 +124,11 @@ exports.updateProject = (Project) => async (req, res) => {
       where: { id, user_id: getUserId(req) },
       attributes: ["name"],
     });
+
+    if (isNil(currentProject) || isNil(currentProject.name)) {
+      return res.status(400).json(BAD_REQUEST);
+    }
+
     const currentName = currentProject.name;
 
     // Get all the projects owned by the user

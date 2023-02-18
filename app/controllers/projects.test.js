@@ -5,6 +5,7 @@ const {
   getProjects,
   createProject,
   deleteProjects,
+  updateProject,
 } = require("./projects");
 const jwt = require("jsonwebtoken");
 const lodash = require("lodash");
@@ -523,7 +524,7 @@ describe("Testing deleteProjects controllers", () => {
   });
 });
 
-// updateProject
+// Testing update project
 describe("Testing updateProject controllers", () => {
   const env = process.env;
   const dockerEnv = {
@@ -540,5 +541,244 @@ describe("Testing updateProject controllers", () => {
     database = lodash.clone(mock_database);
   });
 
-  test("getProject get none", () => {});
+  test("updateProject get bad json", () => {
+    const Project = {
+      findAll: mock_Project(database).findAll,
+      update: mock_Project(database).update,
+      findOne: mock_Project(database).findOne,
+    };
+    const token = jwt.sign({ userId: 1 }, process.env.TOKEN_SECRET, {
+      expiresIn: 3000,
+    });
+
+    const statusCatchFunc = jest.fn(mockStatusCatch);
+
+    const input = {
+      req: {
+        headers: { authorization: `Bearer ${token}` },
+        body: {
+          name: "01245",
+          content: "cheesecakes are delicious right ?",
+        },
+        query: { project_id: 1 },
+      },
+      res: {
+        status: statusCatchFunc,
+      },
+    };
+
+    updateProject(Project)(input.req, input.res);
+    expect(statusCatchFunc).toHaveBeenCalledWith(400);
+  });
+
+  test("updateProject empty name", () => {
+    const Project = {
+      findAll: mock_Project(database).findAll,
+      update: mock_Project(database).create,
+      findOne: mock_Project(database).findOne,
+    };
+    const token = jwt.sign({ userId: 1 }, process.env.TOKEN_SECRET, {
+      expiresIn: 3000,
+    });
+
+    const statusCatchFunc = jest.fn(mockStatusCatch);
+
+    const input = {
+      req: {
+        headers: { authorization: `Bearer ${token}` },
+        body: {
+          name: "",
+          content: '{"chocolate": "2"}',
+        },
+        query: { project_id: 1 },
+      },
+      res: {
+        status: statusCatchFunc,
+      },
+    };
+
+    updateProject(Project)(input.req, input.res);
+    expect(statusCatchFunc).toHaveBeenCalledWith(400);
+  });
+
+  test("updateProject bad request", () => {
+    const Project = {
+      findAll: mock_Project(database).findAll,
+      update: mock_Project(database).update,
+      findOne: mock_Project(database).findOne,
+    };
+    const token = jwt.sign({ userId: 1 }, process.env.TOKEN_SECRET, {
+      expiresIn: 3000,
+    });
+
+    const statusCatchFunc = jest.fn(mockStatusCatch);
+
+    const input = {
+      req: {
+        headers: { authorization: `Bearer ${token}` },
+      },
+      res: {
+        status: statusCatchFunc,
+      },
+    };
+
+    updateProject(Project)(input.req, input.res);
+    expect(statusCatchFunc).toHaveBeenCalledWith(400);
+  });
+
+  test("updateProject name exist", async () => {
+    const Project = {
+      findAll: mock_Project(database).findAll,
+      update: mock_Project(database).update,
+      findOne: mock_Project(database).findOne,
+    };
+    const token = jwt.sign({ userId: 1 }, process.env.TOKEN_SECRET, {
+      expiresIn: 3000,
+    });
+
+    const statusCatchFunc = jest.fn(mockStatusCatch);
+
+    const input = {
+      req: {
+        headers: { authorization: `Bearer ${token}` },
+        body: {
+          name: database.project[2].name,
+          content: '{"chocolate": "2"}',
+        },
+        query: { project_id: 1 },
+      },
+      res: {
+        status: statusCatchFunc,
+      },
+    };
+
+    updateProject(Project)(input.req, input.res).then(() => {
+      expect(statusCatchFunc).toHaveBeenCalledWith(400);
+    });
+  });
+
+  test("updateProject id project is not give", async () => {
+    const Project = {
+      findAll: mock_Project(database).findAll,
+      update: mock_Project(database).update,
+      findOne: mock_Project(database).findOne,
+    };
+    const token = jwt.sign({ userId: 1 }, process.env.TOKEN_SECRET, {
+      expiresIn: 3000,
+    });
+
+    const statusCatchFunc = jest.fn(mockStatusCatch);
+
+    const input = {
+      req: {
+        headers: { authorization: `Bearer ${token}` },
+        body: {
+          name: database.project[0].name,
+          content: '{"chocolate": "2"}',
+        },
+      },
+      res: {
+        status: statusCatchFunc,
+      },
+    };
+
+    updateProject(Project)(input.req, input.res).then(() => {
+      expect(statusCatchFunc).toHaveBeenCalledWith(400);
+    });
+  });
+
+  test("updateProject id project is not good or owner", async () => {
+    const Project = {
+      findAll: mock_Project(database).findAll,
+      update: mock_Project(database).update,
+      findOne: mock_Project(database).findOne,
+    };
+    const token = jwt.sign({ userId: 1 }, process.env.TOKEN_SECRET, {
+      expiresIn: 3000,
+    });
+
+    const statusCatchFunc = jest.fn(mockStatusCatch);
+
+    const input = {
+      req: {
+        headers: { authorization: `Bearer ${token}` },
+        body: {
+          name: database.project[0].name,
+          content: '{"chocolate": "2"}',
+        },
+        query: {
+          project_id: 2,
+        },
+      },
+      res: {
+        status: statusCatchFunc,
+      },
+    };
+
+    updateProject(Project)(input.req, input.res).then(() => {
+      expect(statusCatchFunc).toHaveBeenCalledWith(400);
+    });
+  });
+
+  test("updateProject error 500", async () => {
+    const Project = {
+      findAll: mock_Project(database).findAll,
+      findOne: mock_Project(database).findOne,
+    };
+    const token = jwt.sign({ userId: 1 }, process.env.TOKEN_SECRET, {
+      expiresIn: 3000,
+    });
+
+    const statusCatchFunc = jest.fn(mockStatusCatch);
+
+    const input = {
+      req: {
+        headers: { authorization: `Bearer ${token}` },
+        body: {
+          name: "012345",
+          content: '{"chocolate": "2"}',
+        },
+        query: {
+          project_id: 1,
+        },
+      },
+      res: {
+        status: statusCatchFunc,
+      },
+    };
+
+    updateProject(Project)(input.req, input.res).then(() => {
+      expect(statusCatchFunc).toHaveBeenCalledWith(500);
+    });
+  });
+
+  test("updateProject success", () => {
+    const Project = {
+      findAll: mock_Project(database).findAll,
+      update: mock_Project(database).update,
+      findOne: mock_Project(database).findOne,
+    };
+    const token = jwt.sign({ userId: 1 }, process.env.TOKEN_SECRET, {
+      expiresIn: 3000,
+    });
+
+    const input = {
+      req: {
+        headers: { authorization: `Bearer ${token}` },
+        body: {
+          name: "012345",
+          content: '{"chocolate": "2"}',
+        },
+        query: { project_id: 1 },
+      },
+      res: {
+        status: mockStatusCatch,
+      },
+    };
+
+    const expected = [1];
+    return expect(
+      updateProject(Project)(input.req, input.res)
+    ).resolves.toEqual(expected);
+  });
 });

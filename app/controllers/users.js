@@ -16,7 +16,9 @@ exports.register = (User) => async (req, res) => {
       console.error("[ERROR] Password or Username are empty");
       return res.status(400).json(USERNAME_PASSWORD_INVALID);
     }
+    console.log("YES");
     bcrypt.hash(req.body.password, 10).then(async (hash) => {
+      console.log("here");
       const USER_MODEL = {
         username: req.body.username,
         password: hash,
