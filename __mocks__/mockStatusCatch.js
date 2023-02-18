@@ -1,6 +1,6 @@
-const mockStatusCatch = jest.fn((statusCode) => {
+const mockStatusCatch = (statusCode) => {
   void statusCode;
   return { json: (value) => value };
-});
+};
 
 module.exports = mockStatusCatch;

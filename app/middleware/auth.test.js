@@ -21,16 +21,18 @@ describe("Testing middleware auth check", () => {
     process.env = env;
   });
 
+  const statusCatchFunc = jest.fn(mockStatusCatch)
+
   test("Denied access middleware", () => {
     const input = {
       req: { body: { userId: 1 } },
       res: {
-        status: mockStatusCatch,
+        status: statusCatchFunc,
       },
     };
 
     authMiddleware(input.req, input.res, mockNext);
-    expect(mockStatusCatch).toHaveBeenCalledWith(401);
+    expect(statusCatchFunc).toHaveBeenCalledWith(401);
   });
 
   test("Authorize access middleware", () => {

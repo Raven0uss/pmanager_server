@@ -1,14 +1,14 @@
 const faker = require("faker");
 
 const createProjects = () => {
-  let index = 1;
+  let index = 0;
   const size = 6;
   const project = [];
 
-  while (index <= size) {
+  while (index < size) {
     project.push({
-      id: index,
-      user_id: index % 3,
+      id: index + 1,
+      user_id: index % 2 + 1,
       name: faker.name.firstName(),
       content: faker.datatype.json(),
     });
