@@ -16,22 +16,19 @@ exports.register = (User) => async (req, res) => {
       console.error("[ERROR] Password or Username are empty");
       return res.status(400).json(USERNAME_PASSWORD_INVALID);
     }
-    console.log("YES");
-    bcrypt.hash(req.body.password, 10).then(async (hash) => {
-      console.log("here");
+
+    try {
+      const hash = await bcrypt.hash(req.body.password, 10);
       const USER_MODEL = {
         username: req.body.username,
         password: hash,
       };
-
-      try {
-        const user = await User.create(USER_MODEL);
-        return res.status(201).json(user);
-      } catch (error) {
-        console.error("[ERROR] controllers/register", error);
-        return res.status(500).json(error);
-      }
-    });
+      const user = await User.create(USER_MODEL);
+      return res.status(201).json(user);
+    } catch (error) {
+      console.error("[ERROR] controllers/register", error);
+      return res.status(500).json(error);
+    }
   } catch (error) {
     return res.status(400).json(BAD_REQUEST);
   }

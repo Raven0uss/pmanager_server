@@ -16,36 +16,35 @@ describe("register check suites", () => {
     database = lodash.clone(mock_database);
   });
 
+  test("register success", async () => {
+    const User = {
+      create: mock_User(database).create,
+      findOne: mock_User(database).findOne,
+    };
 
-//   test("register success", async () => {
-//     const User = {
-//       create: mock_User(database).create,
-//       //   findOne: mock_User(database).findOne,
-//     };
+    const input = {
+      req: {
+        body: {
+          username: "westworld",
+          password: "isawesome",
+        },
+      },
+      res: {
+        status: mockStatusCatch,
+      },
+    };
 
-//     const input = {
-//       req: {
-//         body: {
-//           username: "westworld",
-//           password: "isawesome",
-//         },
-//       },
-//       res: {
-//         status: mockStatusCatch,
-//       },
-//     };
-
-//     register(User)(input.req, input.res).then((result) => {
-//       console.log(result);
-//       expect(result).toEqual(
-//         undefined
-//         // expect.objectContaining({
-//         //   username: expect.stringMatching("westworld"),
-//         //   password: expect.not.stringMatching("isawesome"),
-//         // })
-//       );
-//     });
-//   });
+    return register(User)(input.req, input.res).then(async (result) => {
+      expect(result).toEqual(
+        expect.objectContaining({
+          username: expect.stringMatching("westworld"),
+          // Here it checks the string is not matching to be sure 
+          // this is a hash of bcrypt but key still exists :)
+          password: expect.not.stringMatching("isawesome"),
+        })
+      );
+    });
+  });
 
   test.todo("register empty password");
   test.todo("register empty username");
