@@ -64,3 +64,13 @@ exports.login = (User) => async (req, res) => {
     return res.status(500).json(error);
   }
 };
+
+exports.token = () => async (req, res) => {
+  try {
+    const token = req.body.token;
+    const check = jwt.verify(token, process.env.TOKEN_SECRET);
+    return res.status(201).json(check);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
