@@ -776,7 +776,7 @@ describe("Testing updateProject controllers", () => {
       },
     };
 
-    const expected = [1];
+    const expected = input.req.body;
     return expect(
       updateProject(Project)(input.req, input.res)
     ).resolves.toEqual(expected);

@@ -70,10 +70,12 @@ module.exports = (database) => ({
       table = table.filter((project) => project[key] === where[key]);
     });
 
-    const result = table.length;
-    if (result > 1) {
+    if (table.length > 1) {
       throw Error;
     }
-    return Promise.resolve([result]);
+
+    // Behaviour of sequelize when we use the props to return obj
+    // on update request instead of n element modified
+    return Promise.resolve([null, model]);
   },
 });
