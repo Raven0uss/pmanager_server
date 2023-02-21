@@ -150,10 +150,13 @@ exports.updateProject = (Project) => async (req, res) => {
     }
 
     try {
-      const p = await Project.update(PROJECT_MODEL, {
+      const project = await Project.update(PROJECT_MODEL, {
         where: { id, user_id: getUserId(req) },
+        returning: true,
+        plain: true,
       });
-      return res.status(200).json(p);
+
+      return res.status(200).json(project);
     } catch (error) {
       return res.status(500).json(error);
     }

@@ -68,6 +68,9 @@ exports.login = (User) => async (req, res) => {
 exports.token = () => async (req, res) => {
   try {
     const token = req.body.token;
+    if (!token) {
+      return res.status(400).json(null);
+    }
     const check = jwt.verify(token, process.env.TOKEN_SECRET);
     return res.status(201).json(check);
   } catch (error) {
