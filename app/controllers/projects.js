@@ -156,7 +156,7 @@ exports.updateProject = (Project) => async (req, res) => {
         plain: true,
       });
 
-      return res.status(200).json(project);
+      return res.status(200).json(project[1]);
     } catch (error) {
       return res.status(500).json(error);
     }
