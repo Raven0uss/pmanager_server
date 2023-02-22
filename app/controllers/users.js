@@ -5,7 +5,9 @@ const {
   USERNAME_PASSWORD_INVALID,
   USER_NOT_FOUND,
   PASSWORD_INCORRECT,
+  USER_ALREADY_EXIST,
 } = require("../../statusMessages");
+const { get } = require("lodash");
 
 // Register controller function
 exports.register = (User) => async (req, res) => {
@@ -27,6 +29,8 @@ exports.register = (User) => async (req, res) => {
       return res.status(201).json(user);
     } catch (error) {
       console.error("[ERROR] controllers/register", error);
+      if (get(error, "name") === "SequelizeUniqueConstraintError")
+        return res.status(500).json(USER_ALREADY_EXIST);
       return res.status(500).json(error);
     }
   } catch (error) {
@@ -45,8 +49,6 @@ exports.login = (User) => async (req, res) => {
       return res.status(401).json(USER_NOT_FOUND);
     }
 
-    console.log(req.body.password);
-    console.log(user.password);
     const valid = await bcrypt.compare(req.body.password, user.password);
     if (!valid) {
       return res.status(401).json(PASSWORD_INCORRECT);

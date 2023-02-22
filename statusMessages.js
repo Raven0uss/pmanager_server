@@ -7,5 +7,6 @@ module.exports = {
   PASSWORD_INCORRECT: "Password incorrect",
   BAD_REQUEST: "Bad request",
   ACCESS_DENIED: "Access denied",
-  INVALID_USERID: "Invalid User ID"
+  INVALID_USERID: "Invalid User ID",
+  USER_ALREADY_EXIST: "This username already taken",
 };
