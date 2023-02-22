@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "npx jest --coverage"
+    "test": "npx jest --coverage --silent"
   },
   "jest": {
     "verbose": true,

@@ -30,7 +30,7 @@ exports.register = (User) => async (req, res) => {
     } catch (error) {
       console.error("[ERROR] controllers/register", error);
       if (get(error, "name") === "SequelizeUniqueConstraintError")
-        return res.status(500).json(USER_ALREADY_EXIST);
+        return res.status(400).json(USER_ALREADY_EXIST);
       return res.status(500).json(error);
     }
   } catch (error) {
