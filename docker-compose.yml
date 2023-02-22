@@ -19,7 +19,7 @@ services:
             - PGHOST_TEST=pmanager_db_test
             - TOKEN_SECRET=xWmso9Os78GXhkruYB2FMWQPglostosEkCeyMxoWBo4d109RAdhG8pvdiBdJDls
         volumes:
-            - ./:/usr/src/app/
+            - ./app/src:/usr/src/app/src
 
     postgres:
         container_name: pmanager_db
