@@ -3,6 +3,8 @@
 My name is Sofiane BELAZOUZ and this project is my assignement test.
 The API is used with a client on [this repository](https://github.com/Raven0uss/pmanager_client).
 
+You can find here the [API Documentation](https://documenter.getpostman.com/view/25903745/2s93CLstxx) of this project generated with [Postman](https://www.postman.com/).
+
 ## How to start the project ?
 
 You cloned the project ? Perfect. Now, go to the directory and launch the multi-container of this API.
